@@ -178,7 +178,6 @@ dir pathfinder(char * * map, int targetX, int targetY, int sizeX, int sizeY, boo
         printf("\n");
     }
     printf("\n");
-    usleep(300000);
 
     delete(&filling1X);
     delete(&filling1Y);
@@ -230,6 +229,7 @@ dir pathfinder(char * * map, int targetX, int targetY, int sizeX, int sizeY, boo
 
     //display(wayX);
     //display(wayY);
+    //usleep(300000);
 
     //printf("%d - %d\n",getLast(wayX), getLast(wayY));
 
@@ -460,7 +460,6 @@ int pathfinderLen(char * * map, int targetX, int targetY, int sizeX, int sizeY, 
 
     //display(wayX);
     //display(wayY);
-
 
     for (int i=0; i<getLen(wayX); i++) {
         matCost[wayY->t[i]][wayX->t[i]] = 777;

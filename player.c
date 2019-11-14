@@ -1,6 +1,7 @@
 // add the needed C libraries below
 #include <stdbool.h> // bool, true, false
 #include <stdlib.h> // rand
+#include <math.h>
 
 // look at the file below for the definition of the direction type
 // pacman.h must not be modified!
@@ -27,11 +28,13 @@ extern const int ENERGY_SCORE; // reward for eating an energizer
 const char * binome="Sébastien HERT & Tony CHOUTEAU";
 
 // put the prototypes of your additional functions/procedures below
-direction getEnergy(char ** map,int xsize, int ysize, int x, int y);
-direction getGhosts(char ** map,int xsize, int ysize, int x, int y);
+dir getEnergy(char ** map,int xsize, int ysize, int x, int y);
+dir getGhosts(char ** map,int xsize, int ysize, int x, int y);
 direction goRandom(char ** map,int xsize, int ysize, int x, int y);
 int howMany(char** map, int xsize, int ysize, char);
 int howManyGhosts(char** map, int xsize, int ysize);
+direction dirToDirection(dir d2, char ** map,int xsize, int ysize, int x, int y);
+dir getCoin(char ** map,int xsize, int ysize, int x, int y);
 
 // change the pacman function below to build your own player
 // your new pacman function can use as many additional functions/procedures as needed; put the code of these functions/procedures *AFTER* the pacman function
@@ -46,46 +49,104 @@ direction pacman(
 			int remainingenergymoderounds // number of remaining rounds in energy mode, if energy mode is true
 			) {
 	direction d; // the direction to return
+	dir d2 = NONE; //intermediate direction
 
 	//First, we should get super powers
-	if (!energy || (energy && remainingenergymoderounds<5))
-	{
-		d = getEnergy(map, xsize, ysize, x, y);
-		if (d == NONE)
-		{
-			d = goRandom(map, xsize, ysize, x, y);
+	int nbEnergy = howMany(map, xsize, ysize, ENERGY);
+	if ( !energy || (energy && remainingenergymoderounds<10) ){
+		if (nbEnergy > 0){
+			d2 = getEnergy(map, xsize, ysize, x, y);
+		}else{
+			d2 = getCoin(map, xsize, ysize, x, y);
 		}
 	}
 
 	//Now we have super Powers, we should find the best way to find Ghosts
 	else {
-		d = getGhosts(map, xsize, ysize, x, y);
-		if (d == NONE)
-		{
-			d = goRandom(map, xsize, ysize, x, y);
-		}
-		
+		d2 = getGhosts(map, xsize, ysize, x, y);
 	}
 
-	// howMany(map, xsize, ysize, ENERGY);
-	// howMany(map, xsize, ysize, WALL);
-	howMany(map, xsize, ysize, PATH);
-	// howMany(map, xsize, ysize, VIRGIN_PATH);
-	// howManyGhosts(map, xsize, ysize);
-	// howMany(map, xsize, ysize, VIRGIN_PATH);
-	sleep(1);
+	d = dirToDirection(d2, map, xsize, ysize, x, y);
+
   // answer to the game engine 
 	return d;
 }
 
 // the code of your additional functions/procedures must be put below
 
-direction getEnergy(char ** map,int xsize, int ysize, int x, int y){
-	return NONE;
+dir getEnergy(char ** map,int xsize, int ysize, int x, int y){
+	// int nb = howMany(map, xsize, ysize,ENERGY);
+
+	int xEnergy = 0;
+	int yEnergy = 0;
+	float lenMin = -1;
+
+	for (size_t i = 0; i < xsize; i++){
+		for (size_t j = 0; j < ysize; j++){
+			if ( map[j][i] == ENERGY ){
+				float newLen = sqrt( (i - x) * (i - x) + (j - y) * (j - y) );
+				if (lenMin == -1 || lenMin > newLen){
+					lenMin = newLen;
+					xEnergy = i;
+					yEnergy = j;
+				}
+			}
+		}
+	}
+
+	dir d2 = pathfinder(map, xEnergy, yEnergy, xsize, ysize, false);
+	
+	return d2;
 }
 
-direction getGhosts(char ** map,int xsize, int ysize, int x, int y){
-	return NONE;
+dir getCoin(char ** map,int xsize, int ysize, int x, int y){
+	// int nb = howMany(map, xsize, ysize, VIRGIN_PATH);
+	int xCoin = 0;
+	int yCoin = 0;
+	float lenMin = -1;
+
+	for (size_t i = 0; i < xsize; i++){
+		for (size_t j = 0; j < ysize; j++){
+			if ( map[j][i] == VIRGIN_PATH ){
+				float newLen = sqrt( (i - x) * (i - x) + (j - y) * (j - y) );
+				if (lenMin == -1 || lenMin > newLen){
+					lenMin = newLen;
+					xCoin = i;
+					yCoin = j;
+				}
+			}
+		}
+	}
+
+	dir d2 = pathfinder(map, xCoin, yCoin, xsize, ysize, false);
+	
+	return d2;
+}
+
+dir getGhosts(char ** map,int xsize, int ysize, int x, int y){
+	// int nb = howManyGhosts(map, xsize, ysize);
+
+	int xGhost = 0;
+	int yGhost = 0;
+	int lenMin = -1;
+
+	for (size_t i = 0; i < xsize; i++){
+		for (size_t j = 0; j < ysize; j++){
+			if ( map[j][i] == GHOST1 || map[j][i] == GHOST2 || map[j][i] == GHOST3 || map[j][i] == GHOST4 ){
+				int newLen = pathfinderLen(map, i, j, xsize, ysize, true);					
+				if (lenMin == -1 || lenMin > newLen){
+					lenMin = newLen;
+					xGhost = i;
+					yGhost = j;
+				}
+			}
+		}
+	}
+
+	dir d2 = pathfinder(map, xGhost, yGhost, xsize, ysize, true);
+	//sleep (1);
+	
+	return d2;
 }
 
 direction goRandom(char ** map,int xsize, int ysize, int x, int y){
@@ -120,34 +181,42 @@ direction goRandom(char ** map,int xsize, int ysize, int x, int y){
 
 int howMany(char** map, int xsize, int ysize, char c){
 	int cpt = 0;
-	for (size_t i = 0; i < xsize; i++)
-	{
-		for (size_t j = 0; j < ysize; j++)
-		{
-			if (map[j][i] == c)
-			{
+	for (size_t i = 0; i < xsize; i++){
+		for (size_t j = 0; j < ysize; j++){
+			if (map[j][i] == c){
 				cpt++;
 			}
 		}
-		
 	}
-	printf("%d\n", cpt);
+	// printf("%d\n", cpt);
 	return cpt;
 }
 
 int howManyGhosts(char** map, int xsize, int ysize){
 	int cpt = 0;
-	for (size_t i = 0; i < xsize; i++)
-	{
-		for (size_t j = 0; j < ysize; j++)
-		{
-			if (map[j][i] == GHOST1 || map[j][i] == GHOST2 || map[j][i] == GHOST3 || map[j][i] == GHOST4)
-			{
+	for (size_t i = 0; i < xsize; i++){
+		for (size_t j = 0; j < ysize; j++){
+			if (map[j][i] == GHOST1 || map[j][i] == GHOST2 || map[j][i] == GHOST3 || map[j][i] == GHOST4){
 				cpt++;
 			}
 		}
-		
 	}
 	// printf("%d\n", cpt);
 	return cpt;
+}
+
+direction dirToDirection(dir d2, char ** map,int xsize, int ysize, int x, int y){
+	direction d;
+	if (d2 == N){
+		d = NORTH;
+	}else if (d2 == S){
+		d = SOUTH;
+	}else if (d2 == E){
+		d = EAST;		
+	}else if (d2 == W){
+		d = WEST;
+	}else{
+		d = goRandom(map, xsize, ysize, x, y);
+	}
+	return d;	
 }

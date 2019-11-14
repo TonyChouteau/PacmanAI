@@ -206,7 +206,7 @@ dir pathfinder(char * * map, int targetX, int targetY, int sizeX, int sizeY, boo
 
 
     if (wayX == NULL) {
-        printf("No way found\n");
+        // printf("No way found\n");
         sleep(2);
         return NONE;
     } else {
@@ -214,7 +214,7 @@ dir pathfinder(char * * map, int targetX, int targetY, int sizeX, int sizeY, boo
         int yD = getFromEnd(wayY, 1)-start[1];
         delete(&wayX);
         delete(&wayY);
-        printf("%d, %d\n",xD, yD);
+        // printf("%d, %d\n",xD, yD);
 
         if (xD == 1 || xD < -1) {
             return E;

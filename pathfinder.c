@@ -3,7 +3,7 @@
 
 
 // Pathfinder find the best move to reach the X,Y square
-dir pathfinder(char * * map, int targetX, int targetY, int sizeX, int sizeY) {
+dir pathfinder(char * * map, int targetX, int targetY, int sizeX, int sizeY, bool en) {
     
     int matCost[sizeY][sizeX];
     int matVect[sizeY][sizeX];
@@ -19,7 +19,7 @@ dir pathfinder(char * * map, int targetX, int targetY, int sizeX, int sizeY) {
         for (int j=0; j<sizeX; j++)
         {
             c = map[i][j];
-            if (c=='-' || c=='*' || c=='&' || c=='%' || c=='#' || c=='$')
+            if (c=='-' || c=='*' || en && (c=='&' || c=='%' || c=='#' || c=='$'))
             {
                 matCost[i][j] = -1;
                 matVect[i][j] = -1;

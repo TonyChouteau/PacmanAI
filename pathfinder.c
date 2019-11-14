@@ -90,7 +90,7 @@ dir pathfinder(char * * map, int targetX, int targetY, int sizeX, int sizeY, boo
         for (int i=0; i<getLen(filling1X); i++)
         {
             //Top cell
-            if (filling1Y->t[i]-1 >= 0 && matCost[filling1Y->t[i]-1][filling1X->t[i]] == 0)
+            if (filling1Y->t[i]-1) >= 0 && matCost[filling1Y->t[i]-1][filling1X->t[i]] == 0)
             {
                 matCost[filling1Y->t[i]-1][filling1X->t[i]] = cellValue;
                 append(&filling2X,filling1X->t[i]);

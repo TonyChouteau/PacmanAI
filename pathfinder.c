@@ -30,7 +30,7 @@ dir pathfinder(char * * map, int targetX, int targetY, int sizeX, int sizeY, boo
         for (int j=0; j<sizeX; j++)
         {
             c = map[i][j];
-            if (c=='-' || c=='*' || !en && (c=='&' || c=='%' || c=='#' || c=='$'))
+            if (c=='-' || c=='*' || (!en && (c=='&' || c=='%' || c=='#' || c=='$')))
             {
                 matCost[i][j] = -1;
                 matVect[i][j] = -1;
@@ -239,7 +239,7 @@ dir pathfinder(char * * map, int targetX, int targetY, int sizeX, int sizeY, boo
 
     if (wayX == NULL) {
         //printf("No way found\n");
-        sleep(2);
+        // sleep(2);
         return NONE;
     } else {
         int xD = getFromEnd(wayX, 1)-start[0];
@@ -281,7 +281,7 @@ int pathfinderLen(char * * map, int targetX, int targetY, int sizeX, int sizeY, 
         for (int j=0; j<sizeX; j++)
         {
             c = map[i][j];
-            if (c=='-' || c=='*' || !en && (c=='&' || c=='%' || c=='#' || c=='$'))
+            if (c=='-' || c=='*' || (!en && (c=='&' || c=='%' || c=='#' || c=='$')))
             {
                 matCost[i][j] = -1;
                 matVect[i][j] = -1;
@@ -469,6 +469,7 @@ int pathfinderLen(char * * map, int targetX, int targetY, int sizeX, int sizeY, 
         printf("No way found on len\n");
         return 10000;
     } else {
-        getLen(wayX);
+        return getLen(wayX);
     }
+    // return 10000;
 }

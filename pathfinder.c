@@ -90,7 +90,7 @@ dir pathfinder(char * * map, int targetX, int targetY, int sizeX, int sizeY, boo
         for (int i=0; i<getLen(filling1X); i++)
         {
             //Top cell
-            if ((filling1Y->t[i]-1) >= 0 && matCost[filling1Y->t[i]-1][filling1X->t[i]] == 0)
+            if (filling1Y->t[i]-1 >= 0 && matCost[filling1Y->t[i]-1][filling1X->t[i]] == 0)
             {
                 matCost[filling1Y->t[i]-1][filling1X->t[i]] = cellValue;
                 append(&filling2X,filling1X->t[i]);
@@ -108,23 +108,23 @@ dir pathfinder(char * * map, int targetX, int targetY, int sizeX, int sizeY, boo
                 matVect[filling1Y->t[i]+1][filling1X->t[i]] = 0;
             }
                 //printf("%d - %d\n",i,getLen(filling2X));
-            //Right cell
-            if (filling1X->t[i]-1 >= 0 && matCost[filling1Y->t[i]][filling1X->t[i]-1] == 0)
-            {
-                matCost[filling1Y->t[i]][filling1X->t[i]-1] = cellValue;
-                append(&filling2X,filling1X->t[i]-1);
-                append(&filling2Y,filling1Y->t[i]);
-
-                matVect[filling1Y->t[i]][filling1X->t[i]-1] = 1;
-            }
             //Left cell
-            if (filling1X->t[i]+1 < sizeX && matCost[filling1Y->t[i]][filling1X->t[i]+1] == 0)
+            if (matCost[filling1Y->t[i]][(filling1X->t[i]+sizeX-1)%sizeX] == 0)
             {
-                matCost[filling1Y->t[i]][filling1X->t[i]+1] = cellValue;
-                append(&filling2X,filling1X->t[i]+1);
+                matCost[filling1Y->t[i]][(filling1X->t[i]+sizeX-1)%sizeX] = cellValue;
+                append(&filling2X,(filling1X->t[i]+sizeX-1)%sizeX);
                 append(&filling2Y,filling1Y->t[i]);
 
-                matVect[filling1Y->t[i]][filling1X->t[i]+1] = 3;
+                matVect[filling1Y->t[i]][(filling1X->t[i]-1+sizeX)%sizeX] = 1;
+            }
+            //Right cell
+            if (filling1X->t[i]+1 < sizeX && matCost[filling1Y->t[i]][(filling1X->t[i]+1)%sizeX] == 0)
+            {
+                matCost[filling1Y->t[i]][(filling1X->t[i]+1)%sizeX] = cellValue;
+                append(&filling2X,(filling1X->t[i]+1)%sizeX);
+                append(&filling2Y,(filling1X->t[i]+1)%sizeX);
+
+                matVect[filling1Y->t[i]][(filling1X->t[i]+1)%sizeX] = 3;
             }
         }
 
@@ -175,18 +175,18 @@ dir pathfinder(char * * map, int targetX, int targetY, int sizeX, int sizeY, boo
         {
         case 0:
             append(&wayX, x);
-            append(&wayY, --y);
+            append(&wayY, (y = y-1+sizeY)%sizeY);
             break;
         case 1:
-            append(&wayX, ++x);
+            append(&wayX, (x = x+1)%sizeX);
             append(&wayY, y);
             break;
         case 2:
             append(&wayX, x);
-            append(&wayY, ++y);
+            append(&wayY, (y = y+1)%sizeY);
             break;
         case 3:
-            append(&wayX, --x);
+            append(&wayX, (x = x-1+sizeX)%sizeX);
             append(&wayY, y);
             break;
         }
@@ -216,13 +216,13 @@ dir pathfinder(char * * map, int targetX, int targetY, int sizeX, int sizeY, boo
         delete(&wayY);
         printf("%d, %d\n",xD, yD);
 
-        if (xD == 1) {
+        if (xD == 1 || xD < -1) {
             return E;
-        } else if (xD == -1) {
+        } else if (xD == -1|| xD > 1) {
             return W;
-        } else if (yD == 1) {
+        } else if (yD == 1 || yD < -1) {
             return S;
-        } else if (yD == -1) {
+        } else if (yD == -1|| yD > 1) {
             return N;
         } else {
             return NONE;

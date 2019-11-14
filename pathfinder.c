@@ -5,6 +5,17 @@
 // Pathfinder find the best move to reach the X,Y square
 dir pathfinder(char * * map, int targetX, int targetY, int sizeX, int sizeY, bool en) {
     
+    /*for (int i=0; i<sizeY; i++)
+    {
+        for (int j=0; j<sizeX; j++)
+        {
+            printf("%c",map[i][j]);
+        }
+        printf("\n");
+    }
+    printf("\n");
+    sleep(1);*/
+
     int matCost[sizeY][sizeX];
     int matVect[sizeY][sizeX];
 
@@ -115,14 +126,14 @@ dir pathfinder(char * * map, int targetX, int targetY, int sizeX, int sizeY, boo
                 append(&filling2X,(filling1X->t[i]+sizeX-1)%sizeX);
                 append(&filling2Y,filling1Y->t[i]);
 
-                matVect[filling1Y->t[i]][(filling1X->t[i]-1+sizeX)%sizeX] = 1;
+                matVect[filling1Y->t[i]][(filling1X->t[i]+sizeX-1)%sizeX] = 1;
             }
             //Right cell
-            if (filling1X->t[i]+1 < sizeX && matCost[filling1Y->t[i]][(filling1X->t[i]+1)%sizeX] == 0)
+            if (matCost[filling1Y->t[i]][(filling1X->t[i]+1)%sizeX] == 0)
             {
                 matCost[filling1Y->t[i]][(filling1X->t[i]+1)%sizeX] = cellValue;
                 append(&filling2X,(filling1X->t[i]+1)%sizeX);
-                append(&filling2Y,(filling1X->t[i]+1)%sizeX);
+                append(&filling2Y,filling1Y->t[i]);
 
                 matVect[filling1Y->t[i]][(filling1X->t[i]+1)%sizeX] = 3;
             }
@@ -148,6 +159,27 @@ dir pathfinder(char * * map, int targetX, int targetY, int sizeX, int sizeY, boo
         delete(&filling2Y);
     }
 
+    for (int i=0; i<sizeY; i++)
+    {
+        for (int j=0; j<sizeX; j++)
+        {
+            switch(matCost[i][j]){
+            case 0:
+                printf(" ");
+                break;
+            case -1:
+                printf("*");
+                break;
+            default:
+                printf("$");
+                break;
+            }
+        }
+        printf("\n");
+    }
+    printf("\n");
+    usleep(300000);
+
     delete(&filling1X);
     delete(&filling1Y);
 
@@ -167,26 +199,27 @@ dir pathfinder(char * * map, int targetX, int targetY, int sizeX, int sizeY, boo
     //On trace le chemin sauf si la case de début est aussi la case d'arrivé OU case innateignable
     int isDone = ((end[0] == start[0]) && (end[1] == start[1])) || (matCost[end[1]][end[0]] <= 0);
 
-    //printf("%d",isDone);
 
     while (!isDone)
     {
+        //printf("%d, %d, %d\n",x,y,matVect[y][x]);
+        //sleep(1);
         switch(matVect[y][x])
         {
         case 0:
             append(&wayX, x);
-            append(&wayY, (y = y-1+sizeY)%sizeY);
+            append(&wayY, y = (y+sizeY-1)%sizeY);
             break;
         case 1:
-            append(&wayX, (x = x+1)%sizeX);
+            append(&wayX, x = (x+1)%sizeX);
             append(&wayY, y);
             break;
         case 2:
             append(&wayX, x);
-            append(&wayY, (y = y+1)%sizeY);
+            append(&wayY, y = (y+1)%sizeY);
             break;
         case 3:
-            append(&wayX, (x = x-1+sizeX)%sizeX);
+            append(&wayX, x = (x+sizeX-1)%sizeX);
             append(&wayY, y);
             break;
         }
@@ -204,9 +237,8 @@ dir pathfinder(char * * map, int targetX, int targetY, int sizeX, int sizeY, boo
         matCost[wayY->t[i]][wayX->t[i]] = 777;
     }
 
-
     if (wayX == NULL) {
-        // printf("No way found\n");
+        //printf("No way found\n");
         sleep(2);
         return NONE;
     } else {
@@ -338,23 +370,23 @@ int pathfinderLen(char * * map, int targetX, int targetY, int sizeX, int sizeY, 
                 matVect[filling1Y->t[i]+1][filling1X->t[i]] = 0;
             }
                 //printf("%d - %d\n",i,getLen(filling2X));
-            //Right cell
-            if (filling1X->t[i]-1 >= 0 && matCost[filling1Y->t[i]][filling1X->t[i]-1] == 0)
-            {
-                matCost[filling1Y->t[i]][filling1X->t[i]-1] = cellValue;
-                append(&filling2X,filling1X->t[i]-1);
-                append(&filling2Y,filling1Y->t[i]);
-
-                matVect[filling1Y->t[i]][filling1X->t[i]-1] = 1;
-            }
             //Left cell
-            if (filling1X->t[i]+1 < sizeX && matCost[filling1Y->t[i]][filling1X->t[i]+1] == 0)
+            if (matCost[filling1Y->t[i]][(filling1X->t[i]+sizeX-1)%sizeX] == 0)
             {
-                matCost[filling1Y->t[i]][filling1X->t[i]+1] = cellValue;
-                append(&filling2X,filling1X->t[i]+1);
+                matCost[filling1Y->t[i]][(filling1X->t[i]+sizeX-1)%sizeX] = cellValue;
+                append(&filling2X,(filling1X->t[i]+sizeX-1)%sizeX);
                 append(&filling2Y,filling1Y->t[i]);
 
-                matVect[filling1Y->t[i]][filling1X->t[i]+1] = 3;
+                matVect[filling1Y->t[i]][(filling1X->t[i]-1+sizeX)%sizeX] = 1;
+            }
+            //Right cell
+            if (filling1X->t[i]+1 < sizeX && matCost[filling1Y->t[i]][(filling1X->t[i]+1)%sizeX] == 0)
+            {
+                matCost[filling1Y->t[i]][(filling1X->t[i]+1)%sizeX] = cellValue;
+                append(&filling2X,(filling1X->t[i]+1)%sizeX);
+                append(&filling2Y,filling1Y->t[i]);
+
+                matVect[filling1Y->t[i]][(filling1X->t[i]+1)%sizeX] = 3;
             }
         }
 
@@ -397,26 +429,27 @@ int pathfinderLen(char * * map, int targetX, int targetY, int sizeX, int sizeY, 
     //On trace le chemin sauf si la case de début est aussi la case d'arrivé OU case innateignable
     int isDone = ((end[0] == start[0]) && (end[1] == start[1])) || (matCost[end[1]][end[0]] <= 0);
 
-    //printf("%d",isDone);
 
     while (!isDone)
     {
+        //printf("%d, %d, %d\n",x,y,matVect[y][x]);
+        //sleep(1);
         switch(matVect[y][x])
         {
         case 0:
             append(&wayX, x);
-            append(&wayY, --y);
+            append(&wayY, y = (y+sizeY-1)%sizeY);
             break;
         case 1:
-            append(&wayX, ++x);
+            append(&wayX, x = (x+1)%sizeX);
             append(&wayY, y);
             break;
         case 2:
             append(&wayX, x);
-            append(&wayY, ++y);
+            append(&wayY, y = (y+1)%sizeY);
             break;
         case 3:
-            append(&wayX, --x);
+            append(&wayX, x = (x+sizeX-1)%sizeX);
             append(&wayY, y);
             break;
         }
@@ -428,14 +461,13 @@ int pathfinderLen(char * * map, int targetX, int targetY, int sizeX, int sizeY, 
     //display(wayX);
     //display(wayY);
 
-    //printf("%d - %d\n",getLast(wayX), getLast(wayY));
 
     for (int i=0; i<getLen(wayX); i++) {
         matCost[wayY->t[i]][wayX->t[i]] = 777;
     }
 
     if (wayX == NULL) {
-        printf("No way found\n");
+        printf("No way found on len\n");
         return 10000;
     } else {
         getLen(wayX);

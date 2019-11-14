@@ -159,7 +159,7 @@ dir pathfinder(char * * map, int targetX, int targetY, int sizeX, int sizeY, boo
         delete(&filling2Y);
     }
 
-    for (int i=0; i<sizeY; i++)
+    /*for (int i=0; i<sizeY; i++)
     {
         for (int j=0; j<sizeX; j++)
         {
@@ -178,7 +178,7 @@ dir pathfinder(char * * map, int targetX, int targetY, int sizeX, int sizeY, boo
         printf("\n");
     }
     printf("\n");
-    usleep(300000);
+    usleep(200000);*/
 
     delete(&filling1X);
     delete(&filling1Y);

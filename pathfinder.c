@@ -19,7 +19,7 @@ dir pathfinder(char * * map, int targetX, int targetY, int sizeX, int sizeY, boo
         for (int j=0; j<sizeX; j++)
         {
             c = map[i][j];
-            if (c=='*' || !en && (c=='&' || c=='%' || c=='#' || c=='$'))
+            if (c=='-' || c=='*' || !en && (c=='&' || c=='%' || c=='#' || c=='$'))
             {
                 matCost[i][j] = -1;
                 matVect[i][j] = -1;
@@ -249,7 +249,7 @@ int pathfinderLen(char * * map, int targetX, int targetY, int sizeX, int sizeY, 
         for (int j=0; j<sizeX; j++)
         {
             c = map[i][j];
-            if (c=='*' || !en && (c=='&' || c=='%' || c=='#' || c=='$'))
+            if (c=='-' || c=='*' || !en && (c=='&' || c=='%' || c=='#' || c=='$'))
             {
                 matCost[i][j] = -1;
                 matVect[i][j] = -1;

@@ -55,7 +55,7 @@ int getFromEnd(Array a, int i) {
   {
     return a->t[a->len-1-i];
   } else {
-    printf("Array empty \n\n");
+    // printf("Array empty \n\n");
     return -1;
   }
 }

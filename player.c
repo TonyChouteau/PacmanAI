@@ -125,7 +125,7 @@ direction getEnergy(char ** map,int xsize, int ysize, int x, int y){
 	return d;
 }
 
-direction getEnergy(char ** map,int xsize, int ysize, int x, int y){
+direction getGhosts(char ** map,int xsize, int ysize, int x, int y){
 	return NORTH;
 }
 

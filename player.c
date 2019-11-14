@@ -1,6 +1,7 @@
 // add the needed C libraries below
 #include <stdbool.h> // bool, true, false
 #include <stdlib.h> // rand
+#include <stdio.h>
 
 // look at the file below for the definition of the direction type
 // pacman.h must not be modified!
@@ -40,13 +41,40 @@ direction pacman(
 		 bool energy, // is pacman in energy mode? 
 		 int remainingenergymoderounds // number of remaining rounds in energy mode, if energy mode is true
 		 ) {
-  direction d; // the direction to return
-  bool north=false; // indicate whether pacman can go north; no by default
+  direction d = NONE; // the direction to return
+  /*bool north=false; // indicate whether pacman can go north; no by default
   bool east=false; // indicate whether pacman can go east; no by default
   bool south=false; // indicate whether pacman can go south; no by default
   bool west=false; // indicate whether pacman can go west; no by default
   bool ok=false; // turn true when a valid direction is randomly chosen
+ */
 
+
+  char c;
+  
+  while (d == NONE)
+  {
+    c = getchar();
+    getchar();
+    printf("%d",c);
+
+    if (c == 'z') {
+      d = NORTH;
+    } else
+    if (c == 'd') {
+      d = EAST;
+    } else
+    if (c == 's') {
+      d = SOUTH;
+    } else
+    if (c == 'q') {
+      d = WEST;
+    } else {
+      d = NONE;
+    }
+
+  }
+  /*
   // can pacman go north?
   if(y==0 || (y>0 && map[y-1][x]!=WALL && map[y-1][x]!=DOOR)) north=true;
   // can pacman go east?
@@ -66,7 +94,7 @@ direction pacman(
       ok=true;
     }  
   } while(!ok);
-
+  */
   // answer to the game engine 
   return d;
 }

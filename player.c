@@ -23,7 +23,7 @@ extern const int VIRGIN_PATH_SCORE; // reward for eating a dot
 extern const int ENERGY_SCORE; // reward for eating an energizer
 
 // put the student names below (mandatory)
-const char * binome="Random";
+const char * binome="Sébastien HERT & Tony CHOUTEAU";
 
 // put the prototypes of your additional functions/procedures below
 
@@ -72,4 +72,6 @@ direction pacman(
 }
 
 // the code of your additional functions/procedures must be put below
+
+
 

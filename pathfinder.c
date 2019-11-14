@@ -19,7 +19,7 @@ dir pathfinder(char * * map, int targetX, int targetY, int sizeX, int sizeY, boo
         for (int j=0; j<sizeX; j++)
         {
             c = map[i][j];
-            if (c=='-' || c=='*' || !en && (c=='&' || c=='%' || c=='#' || c=='$'))
+            if (c=='*' || !en && (c=='&' || c=='%' || c=='#' || c=='$'))
             {
                 matCost[i][j] = -1;
                 matVect[i][j] = -1;
@@ -202,7 +202,11 @@ dir pathfinder(char * * map, int targetX, int targetY, int sizeX, int sizeY, boo
 
     for (int i=0; i<getLen(wayX); i++) {
         matCost[wayY->t[i]][wayX->t[i]] = 777;
+        if (matCost[wayY->t[i]][wayX->t[i]] == '-') {
+            return INSIDE;
+        }
     }
+
 
     if (wayX == NULL) {
         printf("No way found\n");

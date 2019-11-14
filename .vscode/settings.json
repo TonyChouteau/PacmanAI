@@ -1,0 +1,6 @@
+{
+    "files.associations": {
+        "pacman.h": "c",
+        "pathfinder.h": "c"
+    }
+}

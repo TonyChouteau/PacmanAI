@@ -5,6 +5,7 @@
 // look at the file below for the definition of the direction type
 // pacman.h must not be modified!
 #include "pacman.h"
+#include "pathfinder.h"
 
 // ascii characters used for drawing levels
 extern const char PACMAN; // ascii used for pacman
@@ -63,7 +64,7 @@ direction pacman(
        || (d==EAST && east)
        || (d==SOUTH && south)
        || (d==WEST && west)) {
-      ok=true;
+      //ok=true;
     }  
   } while(!ok);
 

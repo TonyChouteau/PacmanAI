@@ -178,6 +178,7 @@ dir pathfinder(char * * map, int targetX, int targetY, int sizeX, int sizeY, boo
         printf("\n");
     }
     printf("\n");
+    usleep(300000);
 
     delete(&filling1X);
     delete(&filling1Y);

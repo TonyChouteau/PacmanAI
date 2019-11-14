@@ -1,4 +1,5 @@
 
 #include <stdio.h>
+#include "util.h"
 
-int pathfinder(char * * map, int x, int y, int sizeX, int sizeY);
+dir pathfinder(char * * map, int x, int y, int sizeX, int sizeY);

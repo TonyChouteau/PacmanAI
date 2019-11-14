@@ -57,8 +57,10 @@ direction pacman(
   // can pacman go west?
   if(x==0 || (x>0 && map[y][x-1]!=WALL && map[y][x-1]!=DOOR)) west=true;
 
+	d = pathfinder(map, 1, 1, xsize, ysize);
+
   // guess a direction among the allowed four, until a valid choice is made
-  do {
+  /* do {
     d=rand()%4;
     if((d==NORTH && north)
        || (d==EAST && east)
@@ -66,7 +68,7 @@ direction pacman(
        || (d==WEST && west)) {
       //ok=true;
     }  
-  } while(!ok);
+  } while(!ok);*/
 
   // answer to the game engine 
   return d;

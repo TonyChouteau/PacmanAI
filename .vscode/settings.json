@@ -1,6 +1,7 @@
 {
     "files.associations": {
         "pacman.h": "c",
-        "pathfinder.h": "c"
+        "pathfinder.h": "c",
+        "array.h": "c"
     }
 }

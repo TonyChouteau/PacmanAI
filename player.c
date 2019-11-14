@@ -29,6 +29,9 @@ const char * binome="Sébastien HERT & Tony CHOUTEAU";
 // put the prototypes of your additional functions/procedures below
 direction getEnergy(char ** map,int xsize, int ysize, int x, int y);
 direction getGhosts(char ** map,int xsize, int ysize, int x, int y);
+direction goRandom(char ** map,int xsize, int ysize, int x, int y);
+int howMany(char** map, int xsize, int ysize, char);
+int howManyGhosts(char** map, int xsize, int ysize);
 
 // change the pacman function below to build your own player
 // your new pacman function can use as many additional functions/procedures as needed; put the code of these functions/procedures *AFTER* the pacman function
@@ -48,47 +51,29 @@ direction pacman(
 	if (!energy || (energy && remainingenergymoderounds<5))
 	{
 		d = getEnergy(map, xsize, ysize, x, y);
+		if (d == NONE)
+		{
+			d = goRandom(map, xsize, ysize, x, y);
+		}
 	}
 
 	//Now we have super Powers, we should find the best way to find Ghosts
 	else {
 		d = getGhosts(map, xsize, ysize, x, y);
+		if (d == NONE)
+		{
+			d = goRandom(map, xsize, ysize, x, y);
+		}
+		
 	}
-	
 
-
-
-
-
-
-
-
-//   bool north=false; // indicate whether pacman can go north; no by default
-//   bool east=false; // indicate whether pacman can go east; no by default
-//   bool south=false; // indicate whether pacman can go south; no by default
-//   bool west=false; // indicate whether pacman can go west; no by default
-//   bool ok=false; // turn true when a valid direction is randomly chosen
-
-//   // can pacman go north?
-//   if(y==0 || (y>0 && map[y-1][x]!=WALL && map[y-1][x]!=DOOR)) north=true;
-//   // can pacman go east?
-//   if(x==xsize-1 || (x<xsize-1 && map[y][x+1]!=WALL && map[y][x+1]!=DOOR)) east=true;
-//   // can pacman go south?
-//   if(y==ysize-1 || (y<ysize-1 && map[y+1][x]!=WALL && map[y+1][x]!=DOOR)) south=true;
-//   // can pacman go west?
-//   if(x==0 || (x>0 && map[y][x-1]!=WALL && map[y][x-1]!=DOOR)) west=true;
-
-//   // guess a direction among the allowed four, until a valid choice is made
-//   do {
-// 	d=rand()%4;
-// 	if((d==NORTH && north)
-// 	   || (d==EAST && east)
-// 	   || (d==SOUTH && south)
-// 	   || (d==WEST && west)) {
-// 	  ok=true;
-// 	}  
-//   } while(!ok);
-
+	// howMany(map, xsize, ysize, ENERGY);
+	// howMany(map, xsize, ysize, WALL);
+	howMany(map, xsize, ysize, PATH);
+	// howMany(map, xsize, ysize, VIRGIN_PATH);
+	// howManyGhosts(map, xsize, ysize);
+	// howMany(map, xsize, ysize, VIRGIN_PATH);
+	sleep(1);
   // answer to the game engine 
 	return d;
 }
@@ -96,6 +81,14 @@ direction pacman(
 // the code of your additional functions/procedures must be put below
 
 direction getEnergy(char ** map,int xsize, int ysize, int x, int y){
+	return NONE;
+}
+
+direction getGhosts(char ** map,int xsize, int ysize, int x, int y){
+	return NONE;
+}
+
+direction goRandom(char ** map,int xsize, int ysize, int x, int y){
 	direction d;
 	bool north=false; // indicate whether pacman can go north; no by default
   	bool east=false; // indicate whether pacman can go east; no by default
@@ -125,8 +118,36 @@ direction getEnergy(char ** map,int xsize, int ysize, int x, int y){
 	return d;
 }
 
-direction getGhosts(char ** map,int xsize, int ysize, int x, int y){
-	return NORTH;
+int howMany(char** map, int xsize, int ysize, char c){
+	int cpt = 0;
+	for (size_t i = 0; i < xsize; i++)
+	{
+		for (size_t j = 0; j < ysize; j++)
+		{
+			if (map[j][i] == c)
+			{
+				cpt++;
+			}
+		}
+		
+	}
+	printf("%d\n", cpt);
+	return cpt;
 }
 
-
+int howManyGhosts(char** map, int xsize, int ysize){
+	int cpt = 0;
+	for (size_t i = 0; i < xsize; i++)
+	{
+		for (size_t j = 0; j < ysize; j++)
+		{
+			if (map[j][i] == GHOST1 || map[j][i] == GHOST2 || map[j][i] == GHOST3 || map[j][i] == GHOST4)
+			{
+				cpt++;
+			}
+		}
+		
+	}
+	// printf("%d\n", cpt);
+	return cpt;
+}

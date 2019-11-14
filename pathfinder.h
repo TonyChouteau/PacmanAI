@@ -3,5 +3,5 @@
 #include <stdbool.h>
 #include "util.h"
 
-dir pathfinder(char * * map, int x, int y, int sizeX, int sizeY, bool en);
-int pathfinderLen(char * * map, int x, int y, int sizeX, int sizeY, bool en);
+dir pathfinder(char * * map, int targetX, int targetY, int sizeX, int sizeY, bool en);
+int pathfinderLen(char * * map, int targetX, int targetY, int sizeX, int sizeY, bool en);

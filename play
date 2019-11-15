@@ -1,10 +1,14 @@
 #!/bin/bash
 
 ok=0
+ok2=0
 gcc -no-pie -Wall -o pacman.random pacman.o *.c -lm && ok=1
-if [[ $ok == 1 ]]; then
-	./pacman.random -mode original level1.map
+gcc -o score counter/score-counter.c -lm && ok2=1
+if [[ $ok == 1  && $ok2 == 1 ]]; then
+	./score &
+	./pacman.random -mode original level1.map	
 else
-	echo Compilation failed
+	echo Compilation failed $ok $ok2
 fi
 rm -f pacman.random
+pkill score

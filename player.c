@@ -85,13 +85,13 @@ direction pacman(
 	d = dirToDirection(d2, map, xsize, ysize, x, y, lastdirection);
 	// countScore(map, xsize, ysize, x, y, d);
 
-	if (d == N) {
+	if (d == NORTH) {
 		sendSignal(map[y-1][x]);
-	}else if (d == S) {
+	}else if (d == SOUTH) {
 		sendSignal(map[y+1][x]);
-	}else if (d == E) {
+	}else if (d == EAST) {
 		sendSignal(map[y][x+1]);
-	}else if (d == W) {
+	}else if (d == WEST) {
 		sendSignal(map[y][x-1]);
 	}
 	//usleep(500000);

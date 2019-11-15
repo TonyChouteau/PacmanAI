@@ -53,7 +53,7 @@ void signalHandler(int signal){
 }
 
 void p(){
-     printf("Coin(s) %lld - Pacgum(s) %lld - Ghost(s) - %lld - Ghost in a row : %lld | TOTAL : %lld\n", coinCount, energyCount, ghostCount, ghostInRow, score);
+     printf("                                                  Coin(s) %lld - Pacgum(s) %lld - Ghost(s) - %lld - Ghost in a row : %lld | TOTAL : %lld\n", coinCount, energyCount, ghostCount, ghostInRow, score);
 }
 
 

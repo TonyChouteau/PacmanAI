@@ -1,0 +1,10 @@
+#!/bin/bash
+
+ok=0
+gcc -no-pie -Wall -o pacman.random pacman.o *.c -lm && ok=1
+if [[ $ok == 1 ]]; then
+	./pacman.random -mode original level1.map
+else
+	echo Compilation failed
+fi
+rm -f pacman.random

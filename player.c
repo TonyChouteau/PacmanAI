@@ -2,11 +2,16 @@
 #include <stdbool.h> // bool, true, false
 #include <stdlib.h> // rand
 #include <math.h>
+#include <unistd.h>
 
 // look at the file below for the definition of the direction type
 // pacman.h must not be modified!
 #include "pacman.h"
 #include "pathfinder.h"
+
+#define COIN 3
+#define BOOST 4
+#define GHOST 5
 
 // ascii characters used for drawing levels
 extern const char PACMAN; // ascii used for pacman
@@ -39,6 +44,10 @@ dir checkghost(char ** map, int xsize, int ysize, int x, int y, dir d2);
 bool isGhost(char ** map, int xsize, int ysize, int x, int y);
 int countEnergy(char ** map, int xsize, int ysize, int x, int y, int nbEnergy);
 void countScore(char** map, int xsize, int ysize, int x, int y, direction d);
+
+void sendSignal(char c);
+void saveInFile(char ** map, int xsize, int ysize);
+void readFile();
 
 // change the pacman function below to build your own player
 // your new pacman function can use as many additional functions/procedures as needed; put the code of these functions/procedures *AFTER* the pacman function
@@ -76,7 +85,22 @@ direction pacman(
 	d = dirToDirection(d2, map, xsize, ysize, x, y, lastdirection);
 	// countScore(map, xsize, ysize, x, y, d);
 
-  // answer to the game engine 
+	if (d2 == N) {
+		d = NORTH;
+		sendSignal(map[x][y-1]);
+	}else if (d2 == S) {
+		d = SOUTH;
+		sendSignal(map[x][y+1]);
+	}else if (d2 == E) {
+		d = EAST;
+		sendSignal(map[x-1][y]);
+	}else if (d2 == W) {
+		d = WEST;
+		sendSignal(map[x+1][y]);
+	}
+	usleep(500000);
+
+  	// answer to the game engine 
 	return d;
 }
 
@@ -243,18 +267,33 @@ bool isGhost(char ** map, int xsize, int ysize, int x, int y){
 
 direction dirToDirection(dir d2, char ** map,int xsize, int ysize, int x, int y, direction lastdirection){	
 	direction d;
-	if (d2 == N){
+	if (d2 == N) {
 		d = NORTH;
-	}else if (d2 == S){
+	}else if (d2 == S) {
 		d = SOUTH;
-	}else if (d2 == E){
-		d = EAST;		
-	}else if (d2 == W){
-		d = WEST;		
-	}else{
+	}else if (d2 == E) {
+		d = EAST;
+	}else if (d2 == W) {
+		d = WEST;
+	}else {
 		d = (lastdirection+2)%4;
 	}
 	return d;	
+}
+
+void sendSignal(char c) {
+	if (c == '.') {
+		printf("Coin");
+		system("pkill -3 score");
+	}
+	if (c == 'O') {
+		printf("Boost");
+		system("pkill -4 score");
+	}
+	if (c == '$' || c == '#' || c == '%' || c == '&') {
+		printf("Ghost");
+		system("pkill -5 score");
+	}
 }
 
 
@@ -330,10 +369,6 @@ void countScore(char ** map, int xsize, int ysize, int x, int y, direction d){
 		break;
 	}
 	// sleep(1);
-
-
-
-
 
 	fp = fopen("./compteur", "w+");
 	fprintf(fp, "%d\n", i);

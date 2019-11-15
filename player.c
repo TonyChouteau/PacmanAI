@@ -85,21 +85,14 @@ direction pacman(
 	d = dirToDirection(d2, map, xsize, ysize, x, y, lastdirection);
 	// countScore(map, xsize, ysize, x, y, d);
 
-	if (d2 == N) {
-		d = NORTH;
+	if (d == N) {
 		sendSignal(map[y-1][x]);
-	}else if (d2 == S) {
-		d = SOUTH;
+	}else if (d == S) {
 		sendSignal(map[y+1][x]);
-	}else if (d2 == E) {
-		d = EAST;
+	}else if (d == E) {
 		sendSignal(map[y][x+1]);
-	}else if (d2 == W) {
-		d = WEST;
+	}else if (d == W) {
 		sendSignal(map[y][x-1]);
-	}
-	if (!energy) {
-		sendSignal('M');
 	}
 	//usleep(500000);
 
@@ -296,10 +289,6 @@ void sendSignal(char c) {
 	if (c == '$' || c == '#' || c == '%' || c == '&') {
 		printf("Ghost");
 		system("pkill -5 score");
-	}
-	if (c == 'M') {
-		printf("No energy");
-		system("pkill -6 score");
 	}
 }
 

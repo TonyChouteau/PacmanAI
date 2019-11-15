@@ -20,7 +20,6 @@
 #define COIN 3
 #define BOOST 4
 #define GHOST 5
-#define NOMORE 6
 
 long long coinCount;
 long long energyCount;
@@ -39,6 +38,7 @@ void signalHandler(int signal){
         p();
         break;
     case BOOST: //Energy
+        ghostInRow = 0;
         energyCount++;
         score+=BOOSTV;
         p();
@@ -48,9 +48,6 @@ void signalHandler(int signal){
         ghostInRow++;
         score+=GHOSTV*pow(2, ghostInRow-1);
         p();
-        break;
-    case NOMORE:
-        ghostInRow = 0;
         break;
     }
 }
@@ -67,7 +64,7 @@ int main(){
     ghostCount = 0;
     ghostInRow = 0;
 
-    for (int i=COIN; i<NOMORE+1; i++){
+    for (int i=COIN; i<GHOST+1; i++){
         if (signal(i, signalHandler) == SIG_ERR) {
             printf("Error handling signal %d\n", i);
         }

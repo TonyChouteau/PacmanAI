@@ -87,16 +87,16 @@ direction pacman(
 
 	if (d2 == N) {
 		d = NORTH;
-		sendSignal(map[x][y-1]);
+		sendSignal(map[y-1][x]);
 	}else if (d2 == S) {
 		d = SOUTH;
-		sendSignal(map[x][y+1]);
+		sendSignal(map[y+1][x]);
 	}else if (d2 == E) {
 		d = EAST;
-		sendSignal(map[x-1][y]);
+		sendSignal(map[y][x+1]);
 	}else if (d2 == W) {
 		d = WEST;
-		sendSignal(map[x+1][y]);
+		sendSignal(map[y][x-1]);
 	}
 	usleep(500000);
 

@@ -329,7 +329,7 @@ void countScore(char ** map, int xsize, int ysize, int x, int y, direction d){
 	default:
 		break;
 	}
-	sleep(1);
+	// sleep(1);
 
 
 
@@ -339,5 +339,5 @@ void countScore(char ** map, int xsize, int ysize, int x, int y, direction d){
 	fprintf(fp, "%d\n", i);
 	printf("                                                                                        %d\n", i);
 	fclose(fp);
-	sleep (1);
+	// sleep (1);
 }

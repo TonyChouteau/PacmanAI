@@ -26,7 +26,7 @@ long long energyCount;
 long long ghostCount;
 long long ghostInRow;
 
-long long score;
+unsigned long long score;
 
 void p();
 

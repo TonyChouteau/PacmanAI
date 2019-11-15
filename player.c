@@ -43,9 +43,8 @@ dir getCoin(char ** map,int xsize, int ysize, int x, int y);
 dir checkghost(char ** map, int xsize, int ysize, int x, int y, dir d2);
 bool isGhost(char ** map, int xsize, int ysize, int x, int y);
 int countEnergy(char ** map, int xsize, int ysize, int x, int y, int nbEnergy);
-void countScore(char** map, int xsize, int ysize, int x, int y, direction d);
 
-void sendSignal(char c);
+void sendSignal(char c, bool energy);
 void saveInFile(char ** map, int xsize, int ysize);
 void readFile();
 
@@ -66,7 +65,8 @@ direction pacman(
 
 	//First, we should get super powers
 	int nbEnergy = howMany(map, xsize, ysize, ENERGY);
-	int energyLeft = countEnergy(map, xsize, ysize, x, y, nbEnergy);
+	// int energyLeft = countEnergy(map, xsize, ysize, x, y, nbEnergy);
+	int energyLeft = 3;
 	if ( !energy || (energy && remainingenergymoderounds<energyLeft) ){
 		if (nbEnergy > 0){
 			d2 = getEnergy(map, xsize, ysize, x, y);
@@ -86,13 +86,13 @@ direction pacman(
 	// countScore(map, xsize, ysize, x, y, d);
 
 	if (d == NORTH) {
-		sendSignal(map[y-1][x]);
+		sendSignal(map[y-1][x], energy);
 	}else if (d == SOUTH) {
-		sendSignal(map[y+1][x]);
+		sendSignal(map[y+1][x], energy);
 	}else if (d == EAST) {
-		sendSignal(map[y][x+1]);
+		sendSignal(map[y][x+1], energy);
 	}else if (d == WEST) {
-		sendSignal(map[y][x-1]);
+		sendSignal(map[y][x-1], energy);
 	}
 	//usleep(500000);
 
@@ -272,12 +272,12 @@ direction dirToDirection(dir d2, char ** map,int xsize, int ysize, int x, int y,
 	}else if (d2 == W) {
 		d = WEST;
 	}else {
-		d = (lastdirection+2)%4;
+		d = lastdirection;
 	}
 	return d;	
 }
 
-void sendSignal(char c) {
+void sendSignal(char c, bool energy) {
 	if (c == '.') {
 		printf("Coin");
 		system("pkill -3 score");
@@ -286,7 +286,7 @@ void sendSignal(char c) {
 		printf("Boost");
 		system("pkill -4 score");
 	}
-	if (c == '$' || c == '#' || c == '%' || c == '&') {
+	if ((c == '$' || c == '#' || c == '%' || c == '&') && energy) {
 		printf("Ghost");
 		system("pkill -5 score");
 	}
@@ -317,58 +317,4 @@ int countEnergy(char ** map, int xsize, int ysize, int x, int y, int nbEnergy){
 	int count = pathfinderLen(map, xEnergy, yEnergy, xsize, ysize, false);
 	
 	return count;
-}
-
-void countScore(char ** map, int xsize, int ysize, int x, int y, direction d){
-	switch (d){
-	case NORTH:
-		y--;
-		break;
-	case SOUTH:
-		y++;
-		break;
-	case EAST:
-		x++;
-		break;
-	case WEST:
-		x--;
-		break;
-	}
-
-	FILE *fp;
-	int i;
-
-	fp = fopen("./compteur", "w+");
-
-	fscanf(fp, "%d", &i);
-
-	printf ("                                                         %d\n", i);
-	fclose(fp);
-	remove("./compteur");
-
-	
-
-	switch (map[y%ysize][x%xsize]){
-	case '.':
-		i = i+10;
-		break;
-	case 'O':
-		i = i+50;
-		break;
-	case '&':
-	case '%':
-	case '#':
-	case '$':
-		i = 2*i;
-		break;
-	default:
-		break;
-	}
-	// sleep(1);
-
-	fp = fopen("./compteur", "w+");
-	fprintf(fp, "%d\n", i);
-	printf("                                                                                        %d\n", i);
-	fclose(fp);
-	// sleep (1);
 }

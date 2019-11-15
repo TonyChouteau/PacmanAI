@@ -1,2 +1,2 @@
-enum dirDef {N, E, S, W, NONE, INSIDE};
+enum dirDef {N, E, S, W, NONE};
 typedef enum dirDef dir;

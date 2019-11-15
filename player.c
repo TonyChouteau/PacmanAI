@@ -33,8 +33,12 @@ dir getGhosts(char ** map,int xsize, int ysize, int x, int y);
 direction goRandom(char ** map,int xsize, int ysize, int x, int y);
 int howMany(char** map, int xsize, int ysize, char);
 int howManyGhosts(char** map, int xsize, int ysize);
-direction dirToDirection(dir d2, char ** map,int xsize, int ysize, int x, int y);
+direction dirToDirection(dir d2, char ** map,int xsize, int ysize, int x, int y, direction lastdirection);
 dir getCoin(char ** map,int xsize, int ysize, int x, int y);
+dir checkghost(char ** map, int xsize, int ysize, int x, int y, dir d2);
+bool isGhost(char ** map, int xsize, int ysize, int x, int y);
+int countEnergy(char ** map, int xsize, int ysize, int x, int y, int nbEnergy);
+void countScore(char** map, int xsize, int ysize, int x, int y, direction d);
 
 // change the pacman function below to build your own player
 // your new pacman function can use as many additional functions/procedures as needed; put the code of these functions/procedures *AFTER* the pacman function
@@ -53,11 +57,14 @@ direction pacman(
 
 	//First, we should get super powers
 	int nbEnergy = howMany(map, xsize, ysize, ENERGY);
-	if ( !energy || (energy && remainingenergymoderounds<10) ){
+	int energyLeft = countEnergy(map, xsize, ysize, x, y, nbEnergy);
+	if ( !energy || (energy && remainingenergymoderounds<energyLeft) ){
 		if (nbEnergy > 0){
 			d2 = getEnergy(map, xsize, ysize, x, y);
+			d2 = checkghost(map, xsize, ysize, x, y, d2);
 		}else{
 			d2 = getCoin(map, xsize, ysize, x, y);
+			d2 = checkghost(map, xsize, ysize, x, y, d2);
 		}
 	}
 
@@ -66,7 +73,8 @@ direction pacman(
 		d2 = getGhosts(map, xsize, ysize, x, y);
 	}
 
-	d = dirToDirection(d2, map, xsize, ysize, x, y);
+	d = dirToDirection(d2, map, xsize, ysize, x, y, lastdirection);
+	// countScore(map, xsize, ysize, x, y, d);
 
   // answer to the game engine 
 	return d;
@@ -144,7 +152,6 @@ dir getGhosts(char ** map,int xsize, int ysize, int x, int y){
 	}
 
 	dir d2 = pathfinder(map, xGhost, yGhost, xsize, ysize, true);
-	//sleep (1);
 	
 	return d2;
 }
@@ -205,7 +212,36 @@ int howManyGhosts(char** map, int xsize, int ysize){
 	return cpt;
 }
 
-direction dirToDirection(dir d2, char ** map,int xsize, int ysize, int x, int y){
+dir checkghost(char ** map, int xsize, int ysize, int x, int y, dir d2){
+	switch (d2){
+	case N:
+		y--;
+		break;
+	case S:
+		y++;
+		break;
+	case E:
+		x++;
+		break;
+	case W:
+		x--;
+		break;	
+	default:
+		return d2;
+	}
+
+	if ( isGhost(map, xsize, ysize, x+1, y) || isGhost(map, xsize, ysize, x-1, y) || isGhost(map, xsize, ysize, x, y+1) || isGhost(map, xsize, ysize, x, y-1) ){
+		d2 = NONE;
+	}
+
+	return d2;
+}
+
+bool isGhost(char ** map, int xsize, int ysize, int x, int y){
+	return ( map[y%ysize][x%xsize] == GHOST1 || map[y%ysize][x%xsize] == GHOST2 || map[y%ysize][x%xsize] == GHOST3 || map[y%ysize][x%xsize] == GHOST4);
+}
+
+direction dirToDirection(dir d2, char ** map,int xsize, int ysize, int x, int y, direction lastdirection){	
 	direction d;
 	if (d2 == N){
 		d = NORTH;
@@ -214,9 +250,94 @@ direction dirToDirection(dir d2, char ** map,int xsize, int ysize, int x, int y)
 	}else if (d2 == E){
 		d = EAST;		
 	}else if (d2 == W){
-		d = WEST;
+		d = WEST;		
 	}else{
-		d = goRandom(map, xsize, ysize, x, y);
+		d = (lastdirection+2)%4;
 	}
 	return d;	
+}
+
+
+int countEnergy(char ** map, int xsize, int ysize, int x, int y, int nbEnergy){
+	if (nbEnergy == 0){
+		return 10;
+	}
+	int xEnergy = 0;
+	int yEnergy = 0;
+	float lenMin = -1;
+
+	for (size_t i = 0; i < xsize; i++){
+		for (size_t j = 0; j < ysize; j++){
+			if ( map[j][i] == ENERGY ){
+				float newLen = sqrt( (i - x) * (i - x) + (j - y) * (j - y) );
+				if (lenMin == -1 || lenMin > newLen){
+					lenMin = newLen;
+					xEnergy = i;
+					yEnergy = j;
+				}
+			}
+		}
+	}
+
+	int count = pathfinderLen(map, xEnergy, yEnergy, xsize, ysize, false);
+	
+	return count;
+}
+
+void countScore(char ** map, int xsize, int ysize, int x, int y, direction d){
+	switch (d){
+	case NORTH:
+		y--;
+		break;
+	case SOUTH:
+		y++;
+		break;
+	case EAST:
+		x++;
+		break;
+	case WEST:
+		x--;
+		break;
+	}
+
+	FILE *fp;
+	int i;
+
+	fp = fopen("./compteur", "w+");
+
+	fscanf(fp, "%d", &i);
+
+	printf ("                                                         %d\n", i);
+	fclose(fp);
+	remove("./compteur");
+
+	
+
+	switch (map[y%ysize][x%xsize]){
+	case '.':
+		i = i+10;
+		break;
+	case 'O':
+		i = i+50;
+		break;
+	case '&':
+	case '%':
+	case '#':
+	case '$':
+		i = 2*i;
+		break;
+	default:
+		break;
+	}
+	sleep(1);
+
+
+
+
+
+	fp = fopen("./compteur", "w+");
+	fprintf(fp, "%d\n", i);
+	printf("                                                                                        %d\n", i);
+	fclose(fp);
+	sleep (1);
 }

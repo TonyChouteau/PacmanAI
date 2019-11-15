@@ -159,25 +159,25 @@ dir pathfinder(char * * map, int targetX, int targetY, int sizeX, int sizeY, boo
         delete(&filling2Y);
     }
 
-    for (int i=0; i<sizeY; i++)
-    {
-        for (int j=0; j<sizeX; j++)
-        {
-            switch(matCost[i][j]){
-            case 0:
-                printf(" ");
-                break;
-            case -1:
-                printf("*");
-                break;
-            default:
-                printf("$");
-                break;
-            }
-        }
-        printf("\n");
-    }
-    printf("\n");
+    // for (int i=0; i<sizeY; i++)
+    // {
+    //     for (int j=0; j<sizeX; j++)
+    //     {
+    //         switch(matCost[i][j]){
+    //         case 0:
+    //             printf(" ");
+    //             break;
+    //         case -1:
+    //             printf("*");
+    //             break;
+    //         default:
+    //             printf("$");
+    //             break;
+    //         }
+    //     }
+    //     printf("\n");
+    // }
+    // printf("\n");
 
     delete(&filling1X);
     delete(&filling1Y);
@@ -466,7 +466,7 @@ int pathfinderLen(char * * map, int targetX, int targetY, int sizeX, int sizeY, 
     }
 
     if (wayX == NULL) {
-        printf("No way found on len\n");
+        // printf("No way found on len\n");
         return 10000;
     } else {
         return getLen(wayX);

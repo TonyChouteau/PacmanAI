@@ -21,10 +21,10 @@
 #define BOOST 4
 #define GHOST 5
 
-long long coinCount;
-long long energyCount;
-long long ghostCount;
-long long ghostInRow;
+unsigned long long coinCount;
+unsigned long long energyCount;
+unsigned long long ghostCount;
+unsigned long long ghostInRow;
 
 unsigned long long score;
 
@@ -46,7 +46,7 @@ void signalHandler(int signal){
     case GHOST:
         ghostCount++;
         ghostInRow++;
-        score+=GHOSTV*pow(2, ghostInRow-1);
+        score+=GHOSTV*(unsigned long long)pow(2, ghostInRow-1);
         p();
         break;
     }

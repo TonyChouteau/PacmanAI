@@ -66,7 +66,7 @@ direction pacman(
 	//First, we should get super powers
 	int nbEnergy = howMany(map, xsize, ysize, ENERGY);
 	// int energyLeft = countEnergy(map, xsize, ysize, x, y, nbEnergy);
-	int energyLeft = 3;
+	int energyLeft = 1;
 	if ( !energy || (energy && remainingenergymoderounds<energyLeft) ){
 		if (nbEnergy > 0){
 			d2 = getEnergy(map, xsize, ysize, x, y);

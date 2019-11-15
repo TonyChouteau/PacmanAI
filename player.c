@@ -98,7 +98,10 @@ direction pacman(
 		d = WEST;
 		sendSignal(map[y][x-1]);
 	}
-	usleep(500000);
+	if (!energy) {
+		sendSignal('M');
+	}
+	//usleep(500000);
 
   	// answer to the game engine 
 	return d;
@@ -293,6 +296,10 @@ void sendSignal(char c) {
 	if (c == '$' || c == '#' || c == '%' || c == '&') {
 		printf("Ghost");
 		system("pkill -5 score");
+	}
+	if (c == 'M') {
+		printf("No energy");
+		system("pkill -6 score");
 	}
 }
 

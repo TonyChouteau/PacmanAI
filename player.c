@@ -33,13 +33,13 @@ extern const int ENERGY_SCORE; // reward for eating an energizer
 const char * binome="Sébastien HERT & Tony CHOUTEAU";
 
 // put the prototypes of your additional functions/procedures below
-dir getEnergy(char ** map,int xsize, int ysize, int x, int y);
+dir getEnergy(char ** map,int xsize, int ysize, int x, int y, bool energy);
 dir getGhosts(char ** map,int xsize, int ysize, int x, int y);
 direction goRandom(char ** map,int xsize, int ysize, int x, int y);
 int howMany(char** map, int xsize, int ysize, char);
 int howManyGhosts(char** map, int xsize, int ysize);
 direction dirToDirection(dir d2, char ** map,int xsize, int ysize, int x, int y, direction lastdirection);
-dir getCoin(char ** map,int xsize, int ysize, int x, int y);
+dir getCoin(char ** map,int xsize, int ysize, int x, int y, bool energy, int remain);
 dir checkghost(char ** map, int xsize, int ysize, int x, int y, dir d2);
 bool isGhost(char ** map, int xsize, int ysize, int x, int y);
 int countEnergy(char ** map, int xsize, int ysize, int x, int y, int nbEnergy);
@@ -65,19 +65,25 @@ direction pacman(
 
 	//First, we should get super powers
 	int nbEnergy = howMany(map, xsize, ysize, ENERGY);
-	// int energyLeft = countEnergy(map, xsize, ysize, x, y, nbEnergy);
-	int energyLeft = 1;
+	int nbCoin = howMany(map, xsize, ysize, VIRGIN_PATH);
+	
+	int energyLeft = countEnergy(map, xsize, ysize, x, y, nbEnergy);
+	//int energyLeft = 1;
+
 	if ( !energy || (energy && remainingenergymoderounds<energyLeft) ){
 		if (nbEnergy > 0){
-			d2 = getEnergy(map, xsize, ysize, x, y);
+			d2 = getEnergy(map, xsize, ysize, x, y, energy);
 			d2 = checkghost(map, xsize, ysize, x, y, d2);
 		}else{
-			d2 = getCoin(map, xsize, ysize, x, y);
+			d2 = getCoin(map, xsize, ysize, x, y, energy, remainingenergymoderounds);
 			d2 = checkghost(map, xsize, ysize, x, y, d2);
 		}
 	}
-
 	//Now we have super Powers, we should find the best way to find Ghosts
+	else if ((nbCoin >= 0 && nbEnergy != 3) || remainingenergymoderounds <= 30) {
+		d2 = getCoin(map, xsize, ysize, x, y, energy, remainingenergymoderounds);
+	} 
+	//Now we blow up the score 
 	else {
 		d2 = getGhosts(map, xsize, ysize, x, y);
 	}
@@ -102,7 +108,7 @@ direction pacman(
 
 // the code of your additional functions/procedures must be put below
 
-dir getEnergy(char ** map,int xsize, int ysize, int x, int y){
+dir getEnergy(char ** map,int xsize, int ysize, int x, int y, bool energy){
 	// int nb = howMany(map, xsize, ysize,ENERGY);
 
 	int xEnergy = 0;
@@ -112,7 +118,7 @@ dir getEnergy(char ** map,int xsize, int ysize, int x, int y){
 	for (size_t i = 0; i < xsize; i++){
 		for (size_t j = 0; j < ysize; j++){
 			if ( map[j][i] == ENERGY ){
-				float newLen = sqrt( (i - x) * (i - x) + (j - y) * (j - y) );
+				int newLen = pathfinderLen(map, i, j, xsize, ysize, energy);
 				if (lenMin == -1 || lenMin > newLen){
 					lenMin = newLen;
 					xEnergy = i;
@@ -122,12 +128,12 @@ dir getEnergy(char ** map,int xsize, int ysize, int x, int y){
 		}
 	}
 
-	dir d2 = pathfinder(map, xEnergy, yEnergy, xsize, ysize, false);
+	dir d2 = pathfinder(map, xEnergy, yEnergy, xsize, ysize, energy);
 	
 	return d2;
 }
 
-dir getCoin(char ** map,int xsize, int ysize, int x, int y){
+dir getCoin(char ** map,int xsize, int ysize, int x, int y, bool energy, int remain){
 	// int nb = howMany(map, xsize, ysize, VIRGIN_PATH);
 	int xCoin = 0;
 	int yCoin = 0;
@@ -136,7 +142,7 @@ dir getCoin(char ** map,int xsize, int ysize, int x, int y){
 	for (size_t i = 0; i < xsize; i++){
 		for (size_t j = 0; j < ysize; j++){
 			if ( map[j][i] == VIRGIN_PATH ){
-				float newLen = sqrt( (i - x) * (i - x) + (j - y) * (j - y) );
+				int newLen = pathfinderLenDodgeEnergy(map, i, j, xsize, ysize, true, remain);
 				if (lenMin == -1 || lenMin > newLen){
 					lenMin = newLen;
 					xCoin = i;
@@ -146,7 +152,7 @@ dir getCoin(char ** map,int xsize, int ysize, int x, int y){
 		}
 	}
 
-	dir d2 = pathfinder(map, xCoin, yCoin, xsize, ysize, false);
+	dir d2 = pathfinderDodgeEnergy(map, xCoin, yCoin, xsize, ysize, energy, remain);
 	
 	return d2;
 }
@@ -272,6 +278,7 @@ direction dirToDirection(dir d2, char ** map,int xsize, int ysize, int x, int y,
 	}else if (d2 == W) {
 		d = WEST;
 	}else {
+		//if (map[x][y])
 		d = lastdirection;
 	}
 	return d;	

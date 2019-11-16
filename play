@@ -1,5 +1,7 @@
 #!/bin/bash
 
+
+pkill score
 ok=0
 ok2=0
 gcc -no-pie -Wall -o pacman.random pacman.o *.c -lm && ok=1

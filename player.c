@@ -279,7 +279,7 @@ direction dirToDirection(dir d2, char ** map,int xsize, int ysize, int x, int y,
 		d = WEST;
 	}else {
 		//if (map[x][y])
-		d = lastdirection;
+		d = (lastdirection+2)%2;
 	}
 	return d;	
 }
